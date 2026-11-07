@@ -39,9 +39,12 @@ def load_small(split, size=(448, 252)):
 class BallNet(nn.Module):
     """ResNet-18 encoder + light FPN decoder -> stride-4 ball heatmap logits (B,1,H/4,W/4)."""
 
-    def __init__(self, pretrained=True):
+    def __init__(self, pretrained=True, in_ch=3):
         super().__init__()
         r = torchvision.models.resnet18(weights=torchvision.models.ResNet18_Weights.DEFAULT if pretrained else None)
+        if in_ch != 3:  # extra input channels (e.g. a prior map): new conv1 weights start at zero
+            w = r.conv1.weight.data; r.conv1 = nn.Conv2d(in_ch, 64, 7, 2, 3, bias=False)
+            r.conv1.weight.data.zero_(); r.conv1.weight.data[:, :3] = w
         self.stem = nn.Sequential(r.conv1, r.bn1, r.relu, r.maxpool)
         self.l1, self.l2, self.l3, self.l4 = r.layer1, r.layer2, r.layer3, r.layer4
         self.lat = nn.ModuleList([nn.Conv2d(c, 64, 1) for c in (64, 128, 256, 512)])
