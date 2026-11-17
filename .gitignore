@@ -224,3 +224,22 @@ results/
 /data
 /paper/*.aux
 /paper/*.log
+
+# Project-specific
+# model weights (downloaded or trained; yolo11n.pt was committed earlier and stays tracked)
+*.pt
+*.pth
+*.pth.tar
+# LaTeX build output (main.pdf is rebuilt with `cd paper; tectonic main.tex`)
+/paper/*.out
+/paper/*.toc
+/paper/*.bbl
+/paper/*.blg
+/paper/*.fls
+/paper/*.fdb_latexmk
+/paper/*.synctex.gz
+/paper/main.pdf
+# Ultralytics output, local tool state, background-job files
+runs/
+nohup.out
+.claude/
